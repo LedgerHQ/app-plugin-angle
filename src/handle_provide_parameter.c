@@ -25,7 +25,7 @@ static void handle_agToken(ethPluginProvideParameter_t *msg, context_t *context)
         case POOL_MANAGER:
             // An address is 20 bytes long: so we need to make sure we skip the first 12 bytes!
             agToken_ctx->poolManagerIndex =
-                get_manager_contract_index(msg->parameter + PARAMETER_LENGTH - ADDRESS_LENGTH,
+                get_manager_contract_index((uint8_t*)msg->parameter + PARAMETER_LENGTH - ADDRESS_LENGTH,
                                            POOL_MANAGERS,
                                            NUMBER_OF_POOL_MANAGERS);
             if (context->selectorIndex == SLP_DEPOSIT || context->selectorIndex == SLP_WITHDRAW) {
@@ -93,10 +93,10 @@ static void handle_perpetual(ethPluginProvideParameter_t *msg, context_t *contex
         {
             if (compute_leverage(&perpetual_ctx->leverage,
                                  perpetual_ctx->committedAmount,
-                                 msg->parameter) != 0) {
+                                 (uint8_t*)msg->parameter) != 0) {
                 msg->result = ETH_PLUGIN_RESULT_ERROR;
             }
-            compute_fees(perpetual_ctx->max_opening_fees, perpetual_ctx->amount, msg->parameter);
+            compute_fees(perpetual_ctx->max_opening_fees, perpetual_ctx->amount, (uint8_t*)msg->parameter);
             context->next_param = FLAGS_PARAM;
         } break;
         case FLAGS_PARAM:
