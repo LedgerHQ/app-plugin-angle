@@ -24,10 +24,10 @@ static void handle_agToken(ethPluginProvideParameter_t *msg, context_t *context)
             break;
         case POOL_MANAGER:
             // An address is 20 bytes long: so we need to make sure we skip the first 12 bytes!
-            agToken_ctx->poolManagerIndex =
-                get_manager_contract_index((uint8_t*)msg->parameter + PARAMETER_LENGTH - ADDRESS_LENGTH,
-                                           POOL_MANAGERS,
-                                           NUMBER_OF_POOL_MANAGERS);
+            agToken_ctx->poolManagerIndex = get_manager_contract_index(
+                (uint8_t *) msg->parameter + PARAMETER_LENGTH - ADDRESS_LENGTH,
+                POOL_MANAGERS,
+                NUMBER_OF_POOL_MANAGERS);
             if (context->selectorIndex == SLP_DEPOSIT || context->selectorIndex == SLP_WITHDRAW) {
                 context->next_param = FLAGS_PARAM;
             } else {
@@ -58,9 +58,9 @@ static void handle_perpetual(ethPluginProvideParameter_t *msg, context_t *contex
             copy_parameter(perpetual_ctx->perpetualID,
                            msg->parameter,
                            sizeof(perpetual_ctx->perpetualID));
-            context->next_param = context->selectorIndex == ADD_TO_PERPETUAL
-                                      ? AMOUNT
-                                      : CLOSE_PERPETUAL ? BENEFICIARY : UNEXPECTED_PARAMETER;
+            context->next_param = context->selectorIndex == ADD_TO_PERPETUAL ? AMOUNT
+                                  : CLOSE_PERPETUAL                          ? BENEFICIARY
+                                                                             : UNEXPECTED_PARAMETER;
             break;
         case BENEFICIARY:  // address of perpetual/collateral receiver
             copy_address(perpetual_ctx->beneficiary,
@@ -93,10 +93,12 @@ static void handle_perpetual(ethPluginProvideParameter_t *msg, context_t *contex
         {
             if (compute_leverage(&perpetual_ctx->leverage,
                                  perpetual_ctx->committedAmount,
-                                 (uint8_t*)msg->parameter) != 0) {
+                                 (uint8_t *) msg->parameter) != 0) {
                 msg->result = ETH_PLUGIN_RESULT_ERROR;
             }
-            compute_fees(perpetual_ctx->max_opening_fees, perpetual_ctx->amount, (uint8_t*)msg->parameter);
+            compute_fees(perpetual_ctx->max_opening_fees,
+                         perpetual_ctx->amount,
+                         (uint8_t *) msg->parameter);
             context->next_param = FLAGS_PARAM;
         } break;
         case FLAGS_PARAM:
