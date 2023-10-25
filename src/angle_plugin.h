@@ -126,10 +126,3 @@ static const perpetual_manager_t PERPETUAL_MANAGERS[] = {
 #define MANAGER_CONTRACT_NOT_FOUND   -1
 
 #define MAX_LEVERAGE_DISPLAYABLE 0xFFFF
-
-void handle_provide_parameter(void *parameters);
-void handle_query_contract_ui(void *parameters);
-void handle_init_contract(void *parameters);
-void handle_finalize(void *parameters);
-void handle_provide_token(void *parameters);
-void handle_query_contract_id(void *parameters);

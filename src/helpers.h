@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include "angle_plugin.h"
 
 /* Returns the index of the address provided (zero padded left from 21th to 32th bytes, evm
@@ -18,7 +19,7 @@ void compute_fees(uint8_t fees[32], uint8_t margin[32], uint8_t minNetMargin[32]
 /*----------------------- UI HELPERS -----------------------*/
 
 // Set UI for a screen showing an amount.
-void set_amount_ui(ethQueryContractUI_t *msg,
+bool set_amount_ui(ethQueryContractUI_t *msg,
                    char *title,
                    uint8_t *amount,
                    size_t amount_size,
@@ -28,10 +29,10 @@ void set_amount_ui(ethQueryContractUI_t *msg,
                    bool is_collateral);
 
 // Set UI for a screen showing an address.
-void set_address_ui(ethQueryContractUI_t *msg, char *title, uint8_t *address);
+bool set_address_ui(ethQueryContractUI_t *msg, char *title, uint8_t *address);
 
 // Set UI for a screen showing a integer.
-void set_integer_ui(ethQueryContractUI_t *msg, char *title, uint8_t *integer, size_t integer_size);
+bool set_integer_ui(ethQueryContractUI_t *msg, char *title, uint8_t *integer, size_t integer_size);
 
 // Set UI for a screen showing a basic message.
-void set_message_ui(ethQueryContractUI_t *msg, char *title, char *message);
+bool set_message_ui(ethQueryContractUI_t *msg, char *title, char *message);

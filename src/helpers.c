@@ -54,7 +54,7 @@ void compute_fees(uint8_t fees[32], uint8_t margin[32], uint8_t minNetMargin[32]
 /*----------------------- UI HELPERS -----------------------*/
 
 // Set UI for a screen showing an amount.
-void set_amount_ui(ethQueryContractUI_t *msg,
+bool set_amount_ui(ethQueryContractUI_t *msg,
                    char *title,
                    uint8_t *amount,
                    size_t amount_size,
@@ -62,25 +62,32 @@ void set_amount_ui(ethQueryContractUI_t *msg,
                    size_t manager_contract_list_length,
                    int16_t manager_contract_index,
                    bool is_collateral) {
-    strlcpy(msg->title, title, msg->titleLength);
+    bool ret = false;
 
-    if (manager_contract_index >= (int16_t) manager_contract_list_length) {
-        msg->result = ETH_PLUGIN_RESULT_ERROR;
-    } else if (manager_contract_index == MANAGER_CONTRACT_NOT_FOUND) {
-        amountToString(amount, amount_size, WEI_TO_ETHER, "UNKNOWN ", msg->msg, msg->msgLength);
-    } else {
-        manager_contract_t *manager_contract =
-            (manager_contract_t *) PIC(&manager_contract_list[manager_contract_index]);
-        uint8_t decimals = is_collateral ? manager_contract->collateral_decimals
-                                         : manager_contract->agToken_decimals;
-        char *ticker = (char *) PIC(is_collateral ? manager_contract->collateral_ticker
-                                                  : manager_contract->agToken_ticker);
-        amountToString(amount, amount_size, decimals, ticker, msg->msg, msg->msgLength);
+    strlcpy(msg->title, title, msg->titleLength);
+    if (manager_contract_index < (int16_t) manager_contract_list_length) {
+        if (manager_contract_index == MANAGER_CONTRACT_NOT_FOUND) {
+            ret = amountToString(amount,
+                                 amount_size,
+                                 WEI_TO_ETHER,
+                                 "UNKNOWN",
+                                 msg->msg,
+                                 msg->msgLength);
+        } else {
+            manager_contract_t *manager_contract =
+                (manager_contract_t *) PIC(&manager_contract_list[manager_contract_index]);
+            uint8_t decimals = is_collateral ? manager_contract->collateral_decimals
+                                             : manager_contract->agToken_decimals;
+            char *ticker = (char *) PIC(is_collateral ? manager_contract->collateral_ticker
+                                                      : manager_contract->agToken_ticker);
+            ret = amountToString(amount, amount_size, decimals, ticker, msg->msg, msg->msgLength);
+        }
     }
+    return ret;
 }
 
 // Set UI for a screen showing an address.
-void set_address_ui(ethQueryContractUI_t *msg, char *title, uint8_t *address) {
+bool set_address_ui(ethQueryContractUI_t *msg, char *title, uint8_t *address) {
     strlcpy(msg->title, title, msg->titleLength);
 
     // Prefix the address with `0x`.
@@ -93,7 +100,7 @@ void set_address_ui(ethQueryContractUI_t *msg, char *title, uint8_t *address) {
 
     // Get the string representation of the address stored in `context->beneficiary`. Put it in
     // `msg->msg`.
-    getEthAddressStringFromBinary(
+    return getEthAddressStringFromBinary(
         address,
         msg->msg + 2,  // +2 here because we've already prefixed with '0x'.
         msg->pluginSharedRW->sha3,
@@ -101,16 +108,15 @@ void set_address_ui(ethQueryContractUI_t *msg, char *title, uint8_t *address) {
 }
 
 // Set UI for a screen showing a integer.
-void set_integer_ui(ethQueryContractUI_t *msg, char *title, uint8_t *integer, size_t integer_size) {
+bool set_integer_ui(ethQueryContractUI_t *msg, char *title, uint8_t *integer, size_t integer_size) {
     strlcpy(msg->title, title, msg->titleLength);
 
-    if (uint256_to_decimal(integer, integer_size, msg->msg, msg->msgLength) == false) {
-        THROW(EXCEPTION_OVERFLOW);
-    }
+    return uint256_to_decimal(integer, integer_size, msg->msg, msg->msgLength);
 }
 
 // Set UI for a screen showing a basic message.
-void set_message_ui(ethQueryContractUI_t *msg, char *title, char *message) {
+bool set_message_ui(ethQueryContractUI_t *msg, char *title, char *message) {
     strlcpy(msg->title, title, msg->titleLength);
     strlcpy(msg->msg, message, msg->msgLength);
+    return true;
 }
