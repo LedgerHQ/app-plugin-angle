@@ -1,6 +1,4 @@
 #include "helpers.h"
-#include "eth_internals.h"
-#include "debug.h"
 
 /* Returns the index of the address provided (zero padded left from 21th to 32th bytes, evm
    "encoding") in the POOL_MANAGERS table if found. Otherwise, returns -1*/
@@ -103,7 +101,6 @@ bool set_address_ui(ethQueryContractUI_t *msg, char *title, uint8_t *address) {
     return getEthAddressStringFromBinary(
         address,
         msg->msg + 2,  // +2 here because we've already prefixed with '0x'.
-        msg->pluginSharedRW->sha3,
         chainid);
 }
 
