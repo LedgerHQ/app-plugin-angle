@@ -70,7 +70,7 @@ static bool handle_agToken_display(ethQueryContractUI_t *msg, context_t *context
 // amount, leverage, maxOracleRate, max_opening_fees
 static bool handle_perpetual_display(ethQueryContractUI_t *msg, context_t *context) {
     perpetual_ctx_t *perpetual_ctx = &context->perpetual_ctx;
-    uint8_t *contract_addr = msg->pluginSharedRO->txContent->destination;
+    uint8_t *contract_addr = msg->txContent->destination;
     int16_t manager_contract_index =
         get_manager_contract_index(contract_addr, PERPETUAL_MANAGERS, NUMBER_OF_PERPETUAL_MANAGERS);
     bool ret = false;
